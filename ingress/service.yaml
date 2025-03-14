@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: hello-service
+spec:
+  # type: NodePort        # Uncomment, if not using ingress
+  selector:
+    app: hello
+  ports:
+  - name: http
+    protocol: TCP
+    port: 80
+    targetPort: 50001
+    # nodePort: 30080     # Uncomment, if not using ingress
