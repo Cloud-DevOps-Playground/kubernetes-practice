@@ -1,0 +1,12 @@
+namespace: monitoring
+helmCharts:
+  - name: ingress-nginx
+    releaseName: ingress-nginx
+    repo: https://kubernetes.github.io/ingress-nginx
+resources:
+  - namespace.yaml
+  - ingress.yaml
+  - prometheus/config-map.yaml
+  - prometheus/persistent-volume-claim.yaml
+  - prometheus/deployment.yaml
+  - prometheus/service.yaml
