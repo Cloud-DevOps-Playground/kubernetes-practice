@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-server-conf
+  namespace: monitoring
+data:
+  grafana.ini: |
+    [log]
+    ; # Either "debug", "info", "warn", "error", "critical", default is "info"
+    ; # we change from info to debug level
+    level = debug
