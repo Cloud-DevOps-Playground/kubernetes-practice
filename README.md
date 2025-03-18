@@ -6,3 +6,4 @@
 4. Download [**_Kustomize_**](https://kustomize.io/) [binary](https://github.com/kubernetes-sigs/kustomize/releases/latest/) (useful tool)
 5. Practice basic K8s resources: [Namespace | Deployment | Service | Ingress](https://github.com/me-coder/kubernetes-practice/tree/main/ingress)
 6. Practice Prometheus and Grafana deplpoyment using Kubernetes ingress: [monitoring](https://github.com/me-coder/kubernetes-practice/tree/main/monitoring)
+    6.1. Deploy Prometheus and Gradana using `docker-compose`: [monitoring deployments using docker-compose](https://github.com/Cloud-DevOps-Playground/kubernetes-practice/tree/main/monitoring#using-docker-compose)

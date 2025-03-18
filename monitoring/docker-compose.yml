@@ -1,0 +1,116 @@
+name: monitoring
+
+
+networks:
+  monitoring:
+    name:   monitoring
+    driver: bridge
+
+volumes:
+  grafana_data: {}
+  prometheus_data: {}
+
+services:
+  prometheus:
+    image: quay.io/prometheus/prometheus:latest
+    container_name: prometheus
+    restart: unless-stopped
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+        mode: 0755
+      - source: alert_rules
+        target: /etc/prometheus/rules/alert_rules.yml
+        mode: 0755
+    volumes:
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      # - '--storage.tsdb.retention.time=2d'
+      # - '--storage.tsdb.retention.size=5MB'
+      # - '--web.enable-admin-api'
+      # - '--web.console.libraries=/etc/prometheus/console_libraries'
+      # - '--web.console.templates=/etc/prometheus/consoles'
+      # - '--web.enable-lifecycle'
+      # - '--web-external-url=/prometheus/'
+      # - '--web.route-prefix=/prometheus/'
+    ports:
+      - 9090:9090
+    networks:
+      - monitoring
+
+  grafana:
+    image: docker.io/grafana/grafana:latest
+    container_name: grafana
+    restart: unless-stopped
+    configs:
+      - source: grafana_config
+        target: /etc/grafana/grafana.ini
+        mode: 0755
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    ports:
+      - 3000:3000
+    networks:
+      - monitoring
+    # depends_on:
+    #   - prometheus
+
+  # nginx:
+  #   image: docker.io/library/nginx:latest
+  #   container_name: rev_proxy
+  #   restart: unless_stopped
+  #   volumes:
+  #     - ./nginx/conf.d/monitoring_revproxy.conf:/etc/nginx/conf.d/default.conf
+  #     - ./nginx/html:/usr/share/nginx/html
+  #     - ./logs:/var/log/nginx
+  #     - /etc/localtime:/etc/localtime
+  #     - ./ssl/host-site.crt:/etc/ssl/certs/host-site.crt
+  #     - ./ssl/host-site.key:/etc/ssl/private/host-site.key
+  #   ports:
+  #     - 443:443
+  #     - 80:80
+  #   networks:
+  #     - monitoring
+  #   depends_on:
+  #     - prometheus
+  #     - grafana
+
+configs:
+  prometheus_config:
+    content: |
+      global:
+        scrape_interval: 15s
+        evaluation_interval: 15s
+      alerting:
+        alertmanagers:
+          - static_configs:
+              - targets:
+                - alertmanager:9093
+      rule_files:
+        - /etc/prometheus/rules/alert_rules.yml
+      scrape_configs:
+        - job_name: "prometheus"
+          static_configs:
+            - targets: ["localhost:9090"]
+  alert_rules:
+    content: |
+      groups:
+        - name: system_alerts
+          rules:
+            - alert: HighCPUUsage
+              expr: sum(rate(process_cpu_seconds_total[1m])) by (instance) > 0.8
+              for: 1m
+              labels:
+                severity: warning
+              annotations:
+                summary: "High CPU usage detected on instance {{ $$labels.instance }}"
+                description: "CPU usage is above 80% on instance {{ $$labels.instance }} for more than 1 minute."
+  grafana_config:
+    content: |
+      [log]
+      ; # Either "debug", "info", "warn", "error", "critical", default is "info"
+      ; # we change from info to debug level
+      level = debug

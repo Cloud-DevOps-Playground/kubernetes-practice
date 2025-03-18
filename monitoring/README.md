@@ -109,3 +109,65 @@ Ok
 / # exit
 pod "busybox" deleted
 ```
+
+# Using docker-compose
+If you wish to deploy Prometheus and/or Grafana without the hustle of setting up the kubernetes cluster, docker compose is a good option.
+The [docker-compose.yml file](https://github.com/Cloud-DevOps-Playground/kubernetes-practice/blob/main/monitoring/docker-compose.yml) is a good starting point.
+
+[**Compose file reference**](https://docs.docker.com/reference/compose-file/)
+
+**_Note_**: These instructions should also work with [podman-compose](https://github.com/containers/podman-compose?tab=readme-ov-file#podman-compose)
+
+## Deploy resources
+```shell
+$ docker compose -f docker-compose.yml up -d
+[+] Running 5/5
+ ✔ Network monitoring                   Created                                                                                                            0.1s
+ ✔ Volume "monitoring_prometheus_data"  Created                                                                                                            0.0s
+ ✔ Volume "monitoring_grafana_data"     Created                                                                                                            0.0s
+ ✔ Container prometheus                 Started                                                                                                            0.5s
+ ✔ Container grafana                    Started                                                                                                            0.5s
+```
+
+## Test deplyment
+```shell
+$ docker compose -f docker-compose.yml ls
+NAME                STATUS              CONFIG FILES
+monitoring          running(2)          ~/Workspace/Cloud-DevOps-Playground/kubernetes-practice/monitoring/docker-compose.yml
+
+$ docker compose -f docker-compose.yml ps -a
+NAME         IMAGE                                  COMMAND                  SERVICE      CREATED              STATUS              PORTS
+grafana      docker.io/grafana/grafana:latest       "/run.sh"                grafana      About a minute ago   Up About a minute   0.0.0.0:3000->3000/tcp
+prometheus   quay.io/prometheus/prometheus:latest   "/bin/prometheus --c…"   prometheus   About a minute ago   Up About a minute   0.0.0.0:9090->9090/tcp
+
+# Prometheus
+curl -s http://127.0.0.1:9090/
+<a href="/query">Found</a>.
+$ curl -s http://127.0.0.1:9090/-/ready
+Prometheus Server is Ready.
+$ curl -s http://127.0.0.1:9090/-/healthy
+Prometheus Server is Healthy.
+$ curl -s http://127.0.0.1:9090/metrics | tail -5
+# HELP promhttp_metric_handler_requests_total Total number of scrapes by HTTP status code.
+# TYPE promhttp_metric_handler_requests_total counter
+promhttp_metric_handler_requests_total{code="200"} 35
+promhttp_metric_handler_requests_total{code="500"} 0
+promhttp_metric_handler_requests_total{code="503"} 0
+
+# Grafana
+$ curl -s http://127.0.0.1:3000/
+<a href="/login">Found</a>.
+$ curl -s http://127.0.0.1:3000/healthz
+Ok
+```
+
+## Delete deployment
+```shell
+$ docker compose -f docker-compose.yml down -v
+[+] Running 5/5
+ ✔ Container grafana                  Removed                                                                                                              0.9s
+ ✔ Container prometheus               Removed                                                                                                              1.0s
+ ✔ Volume monitoring_prometheus_data  Removed                                                                                                              0.0s
+ ✔ Volume monitoring_grafana_data     Removed                                                                                                              0.0s
+ ✔ Network monitoring                 Removed                                                                                                              0.7s
+```
