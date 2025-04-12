@@ -30,10 +30,10 @@ services:
       # - '--storage.tsdb.retention.time=2d'
       # - '--storage.tsdb.retention.size=5MB'
       # - '--web.enable-admin-api'
-      # - '--web.console.libraries=/etc/prometheus/console_libraries'
-      # - '--web.console.templates=/etc/prometheus/consoles'
-      # - '--web.enable-lifecycle'
-      # - '--web-external-url=/prometheus/'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.external-url=/prometheus/'
       # - '--web.route-prefix=/prometheus/'
     ports:
       - 9090:9090
@@ -55,28 +55,28 @@ services:
       - 3000:3000
     networks:
       - monitoring
-    # depends_on:
-    #   - prometheus
+    depends_on:
+      - prometheus
 
-  # nginx:
-  #   image: docker.io/library/nginx:latest
-  #   container_name: rev_proxy
-  #   restart: unless_stopped
-  #   volumes:
-  #     - ./nginx/conf.d/monitoring_revproxy.conf:/etc/nginx/conf.d/default.conf
-  #     - ./nginx/html:/usr/share/nginx/html
-  #     - ./logs:/var/log/nginx
-  #     - /etc/localtime:/etc/localtime
-  #     - ./ssl/host-site.crt:/etc/ssl/certs/host-site.crt
-  #     - ./ssl/host-site.key:/etc/ssl/private/host-site.key
-  #   ports:
-  #     - 443:443
-  #     - 80:80
-  #   networks:
-  #     - monitoring
-  #   depends_on:
-  #     - prometheus
-  #     - grafana
+  nginx:
+    image: docker.io/library/nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      # - ./nginx/html:/usr/share/nginx/html
+      - ./nginx/logs:/var/log/nginx
+      - /etc/localtime:/etc/localtime
+      - ./nginx/tls/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt
+      - ./nginx/tls/nginx-selfsigned.key:/etc/ssl/private/nginx-selfsigned.key
+    ports:
+      - 443:443
+      - 80:80
+    networks:
+      - monitoring
+    depends_on:
+      - prometheus
+      - grafana
 
 configs:
   prometheus_config:
@@ -95,6 +95,25 @@ configs:
         - job_name: "prometheus"
           static_configs:
             - targets: ["localhost:9090"]
+  grafana_config:
+    content: |
+      [log]
+      ; # Either "debug", "info", "warn", "error", "critical", default is "info"
+      ; # we change from info to debug level
+      level = debug
+      [server]
+      # Protocol (http or https)
+      protocol = http
+      # The http port to use
+      http_port = 3000
+      # The public facing domain name used to access grafana
+      domain = localhost # Or your actual external domain/IP if not localhost
+      # The full URL used to access Grafana from a web browser
+      # IMPORTANT: Make sure this matches your Nginx setup, including the trailing slash
+      root_url = %(protocol)s://%(domain)s:%(http_port)s/grafana/
+      #root_url = http://localhost/grafana/ # Simpler version if port is 80/443 externally
+      # Serve Grafana from subpath
+      serve_from_sub_path = true
   alert_rules:
     content: |
       groups:
@@ -108,9 +127,3 @@ configs:
               annotations:
                 summary: "High CPU usage detected on instance {{ $$labels.instance }}"
                 description: "CPU usage is above 80% on instance {{ $$labels.instance }} for more than 1 minute."
-  grafana_config:
-    content: |
-      [log]
-      ; # Either "debug", "info", "warn", "error", "critical", default is "info"
-      ; # we change from info to debug level
-      level = debug

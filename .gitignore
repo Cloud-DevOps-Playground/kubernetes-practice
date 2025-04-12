@@ -1,3 +1,4 @@
 # Ignore downloaded helm charts
 **/charts/*
 */*.tgz
+**/*.log

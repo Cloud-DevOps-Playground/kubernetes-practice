@@ -74,7 +74,7 @@ promhttp_metric_handler_requests_total{code="503"} 0
 
 ## Grafana
 ```shell
-$ $ curl -s http://grafana.k8s.internal/
+$ curl -s http://grafana.k8s.internal/
 <a href="/login">Found</a>.
 $ curl -s http://grafana.k8s.internal/healthz
 Ok
