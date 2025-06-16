@@ -2,6 +2,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: hello-service
+  namespace: ingress-testing
 spec:
   # type: NodePort        # Uncomment, if not using ingress
   selector:

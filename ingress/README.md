@@ -10,38 +10,38 @@
 ## Ingress controller deployment using `helm`
 ### deploy ingress controller
 ```shell
-$ kubectl create namespace ingress-nginx
+$ kubectl create namespace ingress-testing
 $ helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-$ helm install --namespace ingress-nginx local-ingress-nginx ingress-nginx/ingress-nginx
+$ helm install --namespace ingress-testing local-ingress-nginx ingress-nginx/ingress-nginx
 ```
 
 ### test ingress controller
 ```shell
-$ kubectl --namespace ingress-nginx get services -o wide local-ingress-nginx-controller
+$ kubectl --namespace ingress-testing get services -o wide local-ingress-nginx-controller
 ```
 
 ### delete ingress controller
 ```shell
-$ helm uninstall --namespace ingress-nginx local-ingress-nginx
-$ kubectl delete namespace ingress-nginx
+$ helm uninstall --namespace ingress-testing local-ingress-nginx
+$ kubectl delete namespace ingress-testing
 ```
 
 ## Ingress controller deployment using `kubectl`
 ### deploy ingress controller
 ```shell
-$ kubectl create namespace ingress-nginx
+$ kubectl create namespace ingress-testing
 $ kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.0/deploy/static/provider/aws/deploy.yaml -n ingress-nginx
 ```
 
 ### test ingress controller
 ```shell
-$ kubectl --namespace ingress-nginx get services -o wide local-ingress-nginx-controller
+$ kubectl --namespace ingress-testing get services -o wide local-ingress-nginx-controller
 ```
 
 ### delete ingress controller
 ```shell
 $ kubectl delete -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v0.43.0/deploy/static/provider/cloud/deploy.yaml
-$ kubectl delete namespace ingress-nginx
+$ kubectl delete namespace ingress-testing
 ```
 
 ## Testing with web-app deployment

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hello
+  namespace: ingress-testing
 spec:
   selector:
     matchLabels:
@@ -13,8 +14,9 @@ spec:
         app: hello
     spec:
       containers:
-      - name: hello
-        image: "gcr.io/google-samples/hello-app:2.0"
-        env:
-        - name: "PORT"
-          value: "50001"
+        - name: hello
+          image: "gcr.io/google-samples/hello-app:2.0"
+          env:
+            - name: "PORT"
+              value: "50001"
+

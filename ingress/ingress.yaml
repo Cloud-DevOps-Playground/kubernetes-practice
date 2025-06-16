@@ -4,6 +4,7 @@ metadata:
   name: hello-ingress
   labels:
     app: hello
+    namespace: ingress-testing
 spec:
   ingressClassName: nginx
   rules:
