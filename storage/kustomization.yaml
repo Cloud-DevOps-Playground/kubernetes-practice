@@ -1,0 +1,7 @@
+namespace: storage-testing
+
+resources:
+  - namespace.yaml
+  - pv-volume.yaml
+  - pv-claim.yaml
+  - pv-pod.yaml
