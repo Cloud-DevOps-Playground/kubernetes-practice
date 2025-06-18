@@ -8,9 +8,11 @@ resources:
   - ingress.yaml
   - prometheus/config-map.yaml
   - prometheus/persistent-volume-claim.yaml
-  - prometheus/deployment.yaml
+  # - prometheus/deployment.yaml
+  - prometheus/statefulset.yaml
   - prometheus/service.yaml
   - grafana/config-map.yaml
   - grafana/persistent-volume-claim.yaml
-  - grafana/deployment.yaml
+  # - grafana/deployment.yaml
+  - grafana/statefulset.yaml
   - grafana/service.yaml

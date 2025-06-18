@@ -18,6 +18,8 @@ spec:
           image: quay.io/prometheus/prometheus:latest
           ports:
             - containerPort: 9090
+              name: web
+              protocol: TCP
           args:
             - "--config.file=/etc/prometheus/prometheus.yml"
             - "--storage.tsdb.path=/prometheus"
@@ -47,17 +49,18 @@ spec:
             timeoutSeconds: 5
             failureThreshold: 3
           volumeMounts:
-            - name: config-volume
+            - name: prometheus-config-volume
               mountPath: /etc/prometheus/
-            - name: prometheus-data
-              mountPath: /prometheus
+            - name: prometheus-data-volume
+              mountPath: /prometheus/
       volumes:
-        - name: config-volume
+        - name: prometheus-config-volume
           configMap:
-            name: prometheus-server-conf
+            defaultMode: 420
+            name: prometheus-server-config
             items:
               - key: prometheus.yml
                 path: prometheus.yml
-        - name: prometheus-data
+        - name: prometheus-data-volume
           persistentVolumeClaim:
-            claimName: prometheus-pvc
+            claimName: prometheus-persistentvolumeclaim

@@ -171,3 +171,7 @@ $ docker compose -f docker-compose.yml down -v
  ✔ Volume monitoring_grafana_data     Removed                                                                                                              0.0s
  ✔ Network monitoring                 Removed                                                                                                              0.7s
 ```
+
+# References
+- [Sample data for Prometheus](https://demo.promlabs.com)
+- [Prometheus training videos](https://www.youtube.com/@PromLabs)

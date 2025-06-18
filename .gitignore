@@ -1,4 +1,6 @@
 # Ignore downloaded helm charts
-**/charts/*
+**/charts
 */*.tgz
 **/*.log
+**/grafana/data
+**/prometheus/data

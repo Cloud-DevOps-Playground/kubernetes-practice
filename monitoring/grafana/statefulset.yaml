@@ -1,12 +1,12 @@
 # Reference: https://grafana.com/docs/grafana/latest/setup-grafana/installation/kubernetes/
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  labels:
-    app: grafana
   name: grafana
   namespace: monitoring
 spec:
+  serviceName: grafana
+  replicas: 1
   selector:
     matchLabels:
       app: grafana
@@ -15,10 +15,10 @@ spec:
       labels:
         app: grafana
     spec:
-      securityContext:
-        fsGroup: 472
-        supplementalGroups:
-          - 0
+      # securityContext:
+      #   fsGroup: 472
+      #   supplementalGroups:
+      #     - 0
       containers:
         - name: grafana
           image: grafana/grafana:latest

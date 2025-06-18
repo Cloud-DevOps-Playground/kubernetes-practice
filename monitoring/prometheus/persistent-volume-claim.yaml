@@ -1,29 +1,30 @@
-# apiVersion: v1
-# kind: PersistentVolume
-# metadata:
-#   name: prometheus-pv
-#   namespace: monitoring
-#   labels:
-#     type: local
-# spec:
-#   storageClassName: manual
-#   capacity:
-#     storage: 50Mi
-#   accessModes:
-#     - ReadWriteOnce
-#   hostPath:
-#     path: "/mnt/data/prometheus"
-#     type: Directory
-# ---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-persistentvolume
+  namespace: monitoring
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 10Mi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/Users/yashodhan/Documents/Workspace/Cloud-DevOps-Playground/kubernetes-practice/monitoring/prometheus/data"
+
+---
+
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: prometheus-pvc
+  name: prometheus-persistentvolumeclaim
   namespace: monitoring
 spec:
-  # storageClassName: manual
+  storageClassName: manual
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 50Mi
+      storage: 5Mi

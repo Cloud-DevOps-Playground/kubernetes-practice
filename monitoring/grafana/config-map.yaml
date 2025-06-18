@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: grafana-server-conf
+  name: grafana-server-config
   namespace: monitoring
 data:
   grafana.ini: |
